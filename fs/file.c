@@ -296,16 +296,13 @@ static inline void __clear_open_fd(unsigned int fd, struct fdtable *fdt)
  */
 static unsigned int sane_fdtable_size(struct fdtable *fdt, struct fd_range *punch_hole)
 {
-	unsigned int last = find_last_bit(fdt->open_fds, fdt->max_fds);
+	unsigned int count;
 
-	if (last == fdt->max_fds)
-		return NR_OPEN_DEFAULT;
-	if (punch_hole && punch_hole->to >= last && punch_hole->from <= last) {
-		last = find_last_bit(fdt->open_fds, punch_hole->from);
-		if (last == punch_hole->from)
-			return NR_OPEN_DEFAULT;
-	}
-	return ALIGN(last + 1, BITS_PER_LONG);
+	count = count_open_files(fdt);
+	max_fds = ALIGN(max_fds, BITS_PER_LONG);
+	if (max_fds < NR_OPEN_DEFAULT)
+		max_fds = NR_OPEN_DEFAULT;
+	return ALIGN(min(count, max_fds), BITS_PER_LONG);
 }
 
 /*
