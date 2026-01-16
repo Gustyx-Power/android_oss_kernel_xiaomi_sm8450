@@ -150,6 +150,19 @@ extern int power_supply_is_system_supplied(void);
 		}                                                              \
 	} while (0)
 
+#define MAX(a, b)                                                              \
+	({                                                                     \
+		__typeof__(a) _a = (a);                                        \
+		__typeof__(b) _b = (b);                                        \
+		_a > _b ? _a : _b;                                             \
+	})
+
+#define MIN(a, b)                                                              \
+	({                                                                     \
+		__typeof__(a) _a = (a);                                        \
+		__typeof__(b) _b = (b);                                        \
+		_a < _b ? _a : _b;                                             \
+	})
 
 #define STR(x) #x
 
