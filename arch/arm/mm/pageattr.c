@@ -47,8 +47,8 @@ static int change_memory_common(unsigned long addr, int numpages,
 		return 0;
 
 	if (!IS_ENABLED(CONFIG_FORCE_PAGES) &&
-	    !in_range(start, size, MODULES_VADDR, MODULES_END) &&
-	    !in_range(start, size, VMALLOC_START, VMALLOC_END))
+	    !range_in_range(start, size, MODULES_VADDR, MODULES_END) &&
+	    !range_in_range(start, size, VMALLOC_START, VMALLOC_END))
 		return -EINVAL;
 
 	data.set_mask = set_mask;
