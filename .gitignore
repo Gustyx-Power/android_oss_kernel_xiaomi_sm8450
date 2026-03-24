@@ -165,4 +165,3 @@ arch/arm/boot/dts/vendor
 sphinx_*/
 Compile.log
 build.sh
-build.sh

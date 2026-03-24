@@ -9,6 +9,11 @@ PREEMPT_RT=$5
 CC_VERSION="$6"
 LD=$7
 
+# Allow build scripts to override the compiler string shown in /proc/version
+if [ -n "$KBUILD_COMPILER_STRING" ]; then
+    CC_VERSION="$KBUILD_COMPILER_STRING"
+fi
+
 vecho() { [ "${quiet}" = "silent_" ] || echo "$@" ; }
 
 # Do not expand names
