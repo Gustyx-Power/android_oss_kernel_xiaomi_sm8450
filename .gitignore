@@ -165,3 +165,6 @@ arch/arm/boot/dts/vendor
 sphinx_*/
 Compile.log
 build.sh
+drivers/kernelsu
+include/linux/susfs_def.h
+include/linux/susfs.h
