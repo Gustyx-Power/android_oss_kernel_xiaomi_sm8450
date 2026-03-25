@@ -168,3 +168,4 @@ build.sh
 drivers/kernelsu
 include/linux/susfs_def.h
 include/linux/susfs.h
+build.log
