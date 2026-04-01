@@ -7,8 +7,8 @@ properties() { '
 kernel.string=Xtra Manager Software & Aether Project
 do.devicecheck=1
 do.modules=0
-do.systemless=0
 do.cleanup=1
+do.systemless=0
 do.cleanuponabort=1
 device.name1=marble
 device.name2=marblein
@@ -37,6 +37,10 @@ PATCH_VBMETA_FLAG=auto
 dump_boot
 write_boot
 
-## end boot install
+ui_print " "
+ui_print "NOTE: Bypass charging requires mounted vendor & vendor_dlkm"
+ui_print "Read On XMS Community Channel For Installation"
+ui_print " "
 
-## install additional module
+
+## end boot install
