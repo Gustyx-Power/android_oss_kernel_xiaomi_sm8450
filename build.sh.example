@@ -85,6 +85,49 @@ echo_s() {
     echo -e "\033[1;32m✓ $1\033[0m" | tee -a "$LOG_FILE"
 }
 
+auto_apply_patches() {
+    echo_i "Checking for patches..."
+    
+    local patches_found=0
+    local patches_applied=0
+    
+    # Look for .patch files in current directory
+    for patch_file in *.patch; do
+        [ -f "$patch_file" ] || continue
+        patches_found=$((patches_found + 1))
+        
+        echo "Found patch: $patch_file"
+        
+        # Check if patch is already applied
+        if patch -p1 --dry-run --reverse < "$patch_file" > /dev/null 2>&1; then
+            echo_w "Patch already applied: $patch_file (skipping)"
+            continue
+        fi
+        
+        # Check if patch can be applied
+        if patch -p1 --dry-run < "$patch_file" > /dev/null 2>&1; then
+            echo "Applying patch: $patch_file"
+            if patch -p1 < "$patch_file" >> "$LOG_FILE" 2>&1; then
+                echo_s "Successfully applied: $patch_file"
+                patches_applied=$((patches_applied + 1))
+            else
+                echo_e "Failed to apply: $patch_file"
+                return 1
+            fi
+        else
+            echo_w "Patch cannot be applied (conflicts or already applied): $patch_file"
+        fi
+    done
+    
+    if [ $patches_found -eq 0 ]; then
+        echo "No patches found"
+    else
+        echo_s "Patches: $patches_applied applied, $((patches_found - patches_applied)) skipped"
+    fi
+    
+    return 0
+}
+
 tg_send_msg() {
     $UPLOAD_TG || return 0
     [ -z "$TELEGRAM_BOT_TOKEN" ] || [ -z "$TELEGRAM_CHAT_ID" ] && return 0
@@ -754,6 +797,12 @@ MD5: ${md5}"
 $DO_CLEAN && {
     rm -rf out $MODULES_REPO
     echo_s "Cleaned output directories"
+}
+
+# Auto-apply patches before build
+auto_apply_patches || {
+    echo_e "Failed to apply patches"
+    exit 1
 }
 
 # Upload only mode - find and upload latest zip
