@@ -625,6 +625,40 @@ install_modules() {
 
     echo_s "Modules installation completed"
     tg_send_msg "Modules installed"
+    
+    # Copy special modules to flashable
+    copy_modules_to_flashable
+}
+
+copy_modules_to_flashable() {
+    echo_i "Copying special modules to flashable/modules/..."
+    
+    mkdir -p "$FLASHABLE_DIR/modules"
+    rm -f "$FLASHABLE_DIR/modules"/*.ko
+    
+    local modules_out="out/modules/lib/modules/$(ls -t out/modules/lib/modules/ | head -n1)"
+    local copied_count=0
+    
+    # List of special modules to copy (add more as needed)
+    local special_modules="qti_battery_charger_main.ko"
+    
+    for module_name in $special_modules; do
+        local mod_path=$(find "$modules_out" -name "$module_name" -print -quit 2>/dev/null)
+        
+        if [ -n "$mod_path" ] && [ -f "$mod_path" ]; then
+            cp "$mod_path" "$FLASHABLE_DIR/modules/"
+            echo_s "  Copied: $module_name"
+            copied_count=$((copied_count + 1))
+        else
+            echo_w "  Not found: $module_name"
+        fi
+    done
+    
+    if [ $copied_count -gt 0 ]; then
+        echo_s "Copied $copied_count module(s) to flashable/modules/"
+    else
+        echo_w "No special modules copied to flashable/modules/"
+    fi
 }
 
 setup_anykernel() {
